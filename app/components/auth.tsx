@@ -1,4 +1,3 @@
-import styles from "./auth.module.scss";
 import { IconButton } from "./button";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
@@ -18,7 +17,7 @@ import {
   trackSettingsPageGuideToCPaymentClick,
   trackAuthorizationPageButtonToCPaymentClick,
 } from "../utils/auth-settings-events";
-import clsx from "clsx";
+import { cn } from "../lib/utils";
 
 const storage = safeLocalStorage();
 
@@ -37,7 +36,7 @@ export function AuthPage() {
       access.openaiApiKey = "";
       access.accessCode = "";
     });
-  }; // Reset access code to empty string
+  };
 
   useEffect(() => {
     if (getClientConfig()?.isApp) {
@@ -47,21 +46,23 @@ export function AuthPage() {
   }, []);
 
   return (
-    <div className={styles["auth-page"]}>
+    <div className="flex justify-start items-center h-full w-full flex-col">
       <TopBanner></TopBanner>
-      <div className={styles["auth-header"]}>
+      <div className="flex justify-between w-full p-2.5 box-border animate-slide-in-from-top">
         <IconButton
           icon={<LeftIcon />}
           text={Locale.Auth.Return}
           onClick={() => navigate(Path.Home)}
         ></IconButton>
       </div>
-      <div className={clsx("no-dark", styles["auth-logo"])}>
+      <div className={cn("no-dark mt-[10vh] scale-140")}>
         <BotIcon />
       </div>
 
-      <div className={styles["auth-title"]}>{Locale.Auth.Title}</div>
-      <div className={styles["auth-tips"]}>{Locale.Auth.Tips}</div>
+      <div className="text-2xl font-bold leading-[2] mb-[1vh]">
+        {Locale.Auth.Title}
+      </div>
+      <div className="text-sm">{Locale.Auth.Tips}</div>
 
       <PasswordInput
         style={{ marginTop: "3vh", marginBottom: "3vh" }}
@@ -79,7 +80,7 @@ export function AuthPage() {
 
       {!accessStore.hideUserApiKey ? (
         <>
-          <div className={styles["auth-tips"]}>{Locale.Auth.SubTips}</div>
+          <div className="text-sm">{Locale.Auth.SubTips}</div>
           <PasswordInput
             style={{ marginTop: "3vh", marginBottom: "3vh" }}
             aria={Locale.Settings.ShowPassword}
@@ -109,7 +110,7 @@ export function AuthPage() {
         </>
       ) : null}
 
-      <div className={styles["auth-actions"]}>
+      <div className="flex justify-center flex-col gap-2.5">
         <IconButton
           text={Locale.Auth.Confirm}
           type="primary"
@@ -131,14 +132,11 @@ function TopBanner() {
   const [isVisible, setIsVisible] = useState(true);
   const isMobile = useMobileScreen();
   useEffect(() => {
-    // 检查 localStorage 中是否有标记
     const bannerDismissed = storage.getItem("bannerDismissed");
-    // 如果标记不存在，存储默认值并显示横幅
     if (!bannerDismissed) {
       storage.setItem("bannerDismissed", "false");
-      setIsVisible(true); // 显示横幅
+      setIsVisible(true);
     } else if (bannerDismissed === "true") {
-      // 如果标记为 "true"，则隐藏横幅
       setIsVisible(false);
     }
   }, []);
@@ -161,13 +159,17 @@ function TopBanner() {
   }
   return (
     <div
-      className={styles["top-banner"]}
+      className="relative w-full flex justify-center items-center py-3 px-16 box-border bg-second sm:px-3 sm:py-3"
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
     >
-      <div className={clsx(styles["top-banner-inner"], "no-dark")}>
-        <Logo className={styles["top-banner-logo"]}></Logo>
-        <span>
+      <div
+        className={cn(
+          "flex justify-center items-center text-sm leading-[150%] no-dark",
+        )}
+      >
+        <Logo className="mr-2 sm:mr-2"></Logo>
+        <span className="gap-2">
           {Locale.Auth.TopTips}
           <a
             href={SAAS_CHAT_URL}
@@ -175,6 +177,7 @@ function TopBanner() {
             onClick={() => {
               trackSettingsPageGuideToCPaymentClick();
             }}
+            className="inline-flex items-center no-underline ml-2 text-primary"
           >
             {Locale.Settings.Access.SaasStart.ChatNow}
             <Arrow style={{ marginLeft: "4px" }} />
@@ -182,7 +185,10 @@ function TopBanner() {
         </span>
       </div>
       {(isHovered || isMobile) && (
-        <Delete className={styles["top-banner-close"]} onClick={handleClose} />
+        <Delete
+          className="cursor-pointer absolute top-1/2 right-12 -translate-y-1/2 sm:right-2.5"
+          onClick={handleClose}
+        />
       )}
     </div>
   );

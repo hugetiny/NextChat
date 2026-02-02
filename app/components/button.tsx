@@ -1,8 +1,7 @@
 import * as React from "react";
-
-import styles from "./button.module.scss";
 import { CSSProperties } from "react";
-import clsx from "clsx";
+import { Button, ButtonProps } from "@/app/components/ui/button";
+import { cn } from "@/app/lib/utils";
 
 export type ButtonType = "primary" | "danger" | null;
 
@@ -21,32 +20,39 @@ export function IconButton(props: {
   style?: CSSProperties;
   aria?: string;
 }) {
+  const mapTypeToVariant = (
+    type: ButtonType,
+    bordered?: boolean,
+  ): ButtonProps["variant"] => {
+    if (type === "danger") return "destructive";
+    if (type === "primary") return "default";
+    if (bordered) return "outline";
+    return "secondary";
+  };
+
+  const variant = mapTypeToVariant(props.type ?? null, props.bordered);
+
   return (
-    <button
-      className={clsx(
-        "clickable",
-        styles["icon-button"],
-        {
-          [styles.border]: props.bordered,
-          [styles.shadow]: props.shadow,
-        },
-        styles[props.type ?? ""],
+    <Button
+      variant={variant}
+      className={cn(
+        "flex items-center justify-center gap-2 transition-all duration-300",
+        props.shadow && "shadow-md",
         props.className,
       )}
       onClick={props.onClick}
       title={props.title}
       disabled={props.disabled}
-      role="button"
       tabIndex={props.tabIndex}
       autoFocus={props.autoFocus}
       style={props.style}
-      aria-label={props.aria}
+      aria-label={props.aria || props.text || props.title}
     >
       {props.icon && (
         <div
           aria-label={props.text || props.title}
-          className={clsx(styles["icon-button-icon"], {
-            "no-dark": props.type === "primary",
+          className={cn("flex items-center justify-center", {
+            "text-white": props.type === "primary",
           })}
         >
           {props.icon}
@@ -56,11 +62,11 @@ export function IconButton(props: {
       {props.text && (
         <div
           aria-label={props.text || props.title}
-          className={styles["icon-button-text"]}
+          className="text-xs overflow-hidden text-ellipsis whitespace-nowrap"
         >
           {props.text}
         </div>
       )}
-    </button>
+    </Button>
   );
 }

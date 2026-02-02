@@ -6,7 +6,7 @@ import { requestOpenai } from "./common";
 
 export async function handle(
   req: NextRequest,
-  { params }: { params: { path: string[] } },
+  { params }: { params: { provider: string; path: string[] } },
 ) {
   console.log("[Azure Route] params ", params);
 

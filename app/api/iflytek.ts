@@ -15,7 +15,7 @@ const serverConfig = getServerSideConfig();
 
 export async function handle(
   req: NextRequest,
-  { params }: { params: { path: string[] } },
+  { params }: { params: { provider: string; path: string[] } },
 ) {
   console.log("[Iflytek Route] params ", params);
 

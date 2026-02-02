@@ -5,6 +5,7 @@ import {
   trimTopic,
 } from "../utils";
 
+import { getFastestInstance } from "../utils/searxng-selector";
 import { indexedDBStorage } from "@/app/utils/indexedDB-storage";
 import { nanoid } from "nanoid";
 import type {
@@ -63,6 +64,7 @@ export type ChatMessage = RequestMessage & {
   tools?: ChatMessageTool[];
   audio_url?: string;
   isMcpResponse?: boolean;
+  sources?: any[];
 };
 
 export function createMessage(override: Partial<ChatMessage>): ChatMessage {
@@ -91,6 +93,7 @@ export interface ChatSession {
   lastUpdate: number;
   lastSummarizeIndex: number;
   clearContextIndex?: number;
+  focusMode?: string;
 
   mask: Mask;
 }
@@ -114,6 +117,7 @@ function createEmptySession(): ChatSession {
     },
     lastUpdate: Date.now(),
     lastSummarizeIndex: 0,
+    focusMode: "webSearch",
 
     mask: createEmptyMask(),
   };
@@ -455,6 +459,88 @@ export const useChatStore = createPersistStore(
             botMessage,
           ]);
         });
+
+        if (
+          session.focusMode &&
+          session.focusMode !== "chat" &&
+          !isMcpResponse
+        ) {
+          const searchNode = await getFastestInstance();
+
+          fetch("/api/search", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              chatModel: {
+                provider: modelConfig.providerName,
+                model: modelConfig.model,
+              },
+              focusMode: session.focusMode,
+              chatHistory: sendMessages,
+              searchNode: searchNode,
+            }),
+          })
+            .then(async (response) => {
+              if (!response.body) return;
+              const reader = response.body.getReader();
+              const decoder = new TextDecoder();
+              let done = false;
+              let buffer = "";
+
+              while (!done) {
+                const { value, done: doneReading } = await reader.read();
+                done = doneReading;
+                const chunkValue = decoder.decode(value, { stream: true });
+
+                buffer += chunkValue;
+                const lines = buffer.split("\n");
+
+                buffer = !done ? (lines.pop() ?? "") : "";
+
+                for (const line of lines) {
+                  if (!line.trim()) continue;
+
+                  try {
+                    const data = JSON.parse(line);
+                    if (data.type === "sources") {
+                      botMessage.sources = data.sources;
+                    } else if (data.type === "message") {
+                      botMessage.content += data.content;
+                    } else if (data.type === "error") {
+                      botMessage.content += `\n\nError: ${data.message}`;
+                    }
+                  } catch (e) {
+                    console.error("[Search] Parse error", e);
+                    if (line.trim().startsWith("{")) {
+                    } else {
+                      botMessage.content += line + "\n";
+                    }
+                  }
+                }
+
+                botMessage.streaming = true;
+                get().updateTargetSession(session, (session) => {
+                  session.messages = session.messages.concat();
+                });
+              }
+
+              botMessage.streaming = false;
+              botMessage.date = new Date().toLocaleString();
+              get().onNewMessage(botMessage, session);
+            })
+            .catch((error) => {
+              console.error("[Search] failed ", error);
+              botMessage.content += "\n\nError: " + error.message;
+              botMessage.streaming = false;
+              get().updateTargetSession(session, (session) => {
+                session.messages = session.messages.concat();
+              });
+            });
+
+          return;
+        }
 
         const api: ClientApi = getClientApi(modelConfig.providerName);
         // make request
@@ -812,6 +898,13 @@ export const useChatStore = createPersistStore(
         updater(sessions[index]);
         set(() => ({ sessions }));
       },
+
+      updateFocusMode(session: ChatSession, focusMode: string) {
+        get().updateTargetSession(session, (session) => {
+          session.focusMode = focusMode;
+        });
+      },
+
       async clearAllData() {
         await indexedDBStorage.clear();
         localStorage.clear();

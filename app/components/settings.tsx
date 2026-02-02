@@ -1,7 +1,5 @@
 import { useState, useEffect, useMemo } from "react";
 
-import styles from "./settings.module.scss";
-
 import ResetIcon from "../icons/reload.svg";
 import AddIcon from "../icons/add.svg";
 import CloseIcon from "../icons/close.svg";
@@ -108,12 +106,12 @@ function EditPromptModal(props: { id: string; onClose: () => void }) {
           />,
         ]}
       >
-        <div className={styles["edit-prompt-modal"]}>
+        <div className={"edit-prompt-modal"}>
           <input
             type="text"
             value={prompt.title}
             readOnly={!prompt.isUser}
-            className={styles["edit-prompt-title"]}
+            className={"edit-prompt-title"}
             onInput={(e) =>
               promptStore.updatePrompt(
                 props.id,
@@ -124,7 +122,7 @@ function EditPromptModal(props: { id: string; onClose: () => void }) {
           <Input
             value={prompt.content}
             readOnly={!prompt.isUser}
-            className={styles["edit-prompt-content"]}
+            className={"edit-prompt-content"}
             rows={10}
             onInput={(e) =>
               promptStore.updatePrompt(
@@ -182,49 +180,49 @@ function UserPromptModal(props: { onClose?: () => void }) {
           />,
         ]}
       >
-        <div className={styles["user-prompt-modal"]}>
+        <div className={"user-prompt-modal"}>
           <input
             type="text"
-            className={styles["user-prompt-search"]}
+            className={"user-prompt-search"}
             placeholder={Locale.Settings.Prompt.Modal.Search}
             value={searchInput}
             onInput={(e) => setSearchInput(e.currentTarget.value)}
           ></input>
 
-          <div className={styles["user-prompt-list"]}>
+          <div className={"user-prompt-list"}>
             {prompts.map((v, _) => (
-              <div className={styles["user-prompt-item"]} key={v.id ?? v.title}>
-                <div className={styles["user-prompt-header"]}>
-                  <div className={styles["user-prompt-title"]}>{v.title}</div>
-                  <div className={styles["user-prompt-content"] + " one-line"}>
+              <div className={"user-prompt-item"} key={v.id ?? v.title}>
+                <div className={"user-prompt-header"}>
+                  <div className={"user-prompt-title"}>{v.title}</div>
+                  <div className={"user-prompt-content" + " one-line"}>
                     {v.content}
                   </div>
                 </div>
 
-                <div className={styles["user-prompt-buttons"]}>
+                <div className={"user-prompt-buttons"}>
                   {v.isUser && (
                     <IconButton
                       icon={<ClearIcon />}
-                      className={styles["user-prompt-button"]}
+                      className={"user-prompt-button"}
                       onClick={() => promptStore.remove(v.id!)}
                     />
                   )}
                   {v.isUser ? (
                     <IconButton
                       icon={<EditIcon />}
-                      className={styles["user-prompt-button"]}
+                      className={"user-prompt-button"}
                       onClick={() => setEditingPromptId(v.id)}
                     />
                   ) : (
                     <IconButton
                       icon={<EyeIcon />}
-                      className={styles["user-prompt-button"]}
+                      className={"user-prompt-button"}
                       onClick={() => setEditingPromptId(v.id)}
                     />
                   )}
                   <IconButton
                     icon={<CopyIcon />}
-                    className={styles["user-prompt-button"]}
+                    className={"user-prompt-button"}
                     onClick={() => copyToClipboard(v.content)}
                   />
                 </div>
@@ -696,7 +694,7 @@ export function Settings() {
 
   const saasStartComponent = (
     <ListItem
-      className={styles["subtitle-button"]}
+      className={"subtitle-button"}
       title={
         Locale.Settings.Access.SaasStart.Title +
         `${Locale.Settings.Access.SaasStart.Label}`
@@ -1459,61 +1457,64 @@ export function Settings() {
     </>
   );
 
-  const ai302ConfigComponent = accessStore.provider === ServiceProvider["302.AI"] && (
+  const ai302ConfigComponent = accessStore.provider ===
+    ServiceProvider["302.AI"] && (
     <>
       <ListItem
-          title={Locale.Settings.Access.AI302.Endpoint.Title}
-          subTitle={
-            Locale.Settings.Access.AI302.Endpoint.SubTitle +
-            AI302.ExampleEndpoint
+        title={Locale.Settings.Access.AI302.Endpoint.Title}
+        subTitle={
+          Locale.Settings.Access.AI302.Endpoint.SubTitle + AI302.ExampleEndpoint
+        }
+      >
+        <input
+          aria-label={Locale.Settings.Access.AI302.Endpoint.Title}
+          type="text"
+          value={accessStore.ai302Url}
+          placeholder={AI302.ExampleEndpoint}
+          onChange={(e) =>
+            accessStore.update(
+              (access) => (access.ai302Url = e.currentTarget.value),
+            )
           }
-        >
-          <input
-            aria-label={Locale.Settings.Access.AI302.Endpoint.Title}
-            type="text"
-            value={accessStore.ai302Url}
-            placeholder={AI302.ExampleEndpoint}
-            onChange={(e) =>
-              accessStore.update(
-                (access) => (access.ai302Url = e.currentTarget.value),
-              )
-            }
-          ></input>
-        </ListItem>
-        <ListItem
-          title={Locale.Settings.Access.AI302.ApiKey.Title}
-          subTitle={Locale.Settings.Access.AI302.ApiKey.SubTitle}
-        >
-          <PasswordInput
-            aria-label={Locale.Settings.Access.AI302.ApiKey.Title}
-            value={accessStore.ai302ApiKey}
-            type="text"
-            placeholder={Locale.Settings.Access.AI302.ApiKey.Placeholder}
-            onChange={(e) => {
-              accessStore.update(
-                (access) => (access.ai302ApiKey = e.currentTarget.value),
-              );
-            }}
-          />
-        </ListItem>
-      </>
+        ></input>
+      </ListItem>
+      <ListItem
+        title={Locale.Settings.Access.AI302.ApiKey.Title}
+        subTitle={Locale.Settings.Access.AI302.ApiKey.SubTitle}
+      >
+        <PasswordInput
+          aria-label={Locale.Settings.Access.AI302.ApiKey.Title}
+          value={accessStore.ai302ApiKey}
+          type="text"
+          placeholder={Locale.Settings.Access.AI302.ApiKey.Placeholder}
+          onChange={(e) => {
+            accessStore.update(
+              (access) => (access.ai302ApiKey = e.currentTarget.value),
+            );
+          }}
+        />
+      </ListItem>
+    </>
   );
 
   return (
     <ErrorBoundary>
-      <div className="window-header" data-tauri-drag-region>
-        <div className="window-header-title">
-          <div className="window-header-main-title">
+      <div
+        className="flex justify-between items-center p-5 border-b border-border relative select-none"
+        data-tauri-drag-region
+      >
+        <div className="flex flex-col overflow-hidden max-w-[calc(100%-100px)]">
+          <div className="text-xl font-bold truncate block max-w-[50vw]">
             {Locale.Settings.Title}
           </div>
-          <div className="window-header-sub-title">
+          <div className="text-sm text-muted-foreground">
             {Locale.Settings.SubTitle}
           </div>
         </div>
-        <div className="window-actions">
-          <div className="window-action-button"></div>
-          <div className="window-action-button"></div>
-          <div className="window-action-button">
+        <div className="flex gap-2">
+          <div className="flex items-center justify-center"></div>
+          <div className="flex items-center justify-center"></div>
+          <div className="flex items-center justify-center">
             <IconButton
               aria={Locale.UI.Close}
               icon={<CloseIcon />}
@@ -1523,7 +1524,7 @@ export function Settings() {
           </div>
         </div>
       </div>
-      <div className={styles["settings"]}>
+      <div className={"h-full overflow-y-auto p-5"}>
         <List>
           <ListItem title={Locale.Settings.Avatar}>
             <Popover
@@ -1541,7 +1542,7 @@ export function Settings() {
               <div
                 aria-label={Locale.Settings.Avatar}
                 tabIndex={0}
-                className={styles.avatar}
+                className={"avatar"}
                 onClick={() => {
                   setShowEmojiPicker(!showEmojiPicker);
                 }}
@@ -1557,8 +1558,8 @@ export function Settings() {
               checkingUpdate
                 ? Locale.Settings.Update.IsChecking
                 : hasNewVersion
-                ? Locale.Settings.Update.FoundUpdate(remoteId ?? "ERROR")
-                : Locale.Settings.Update.IsLatest
+                  ? Locale.Settings.Update.FoundUpdate(remoteId ?? "ERROR")
+                  : Locale.Settings.Update.IsLatest
             }
           >
             {checkingUpdate ? (

@@ -1,6 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { ErrorBoundary } from "./error";
-import styles from "./mask.module.scss";
 import { useNavigate } from "react-router-dom";
 import { IconButton } from "./button";
 import CloseIcon from "../icons/close.svg";
@@ -87,20 +86,20 @@ export function SearchChatPage() {
 
   return (
     <ErrorBoundary>
-      <div className={styles["mask-page"]}>
+      <div className={"mask-page"}>
         {/* header */}
-        <div className="window-header">
-          <div className="window-header-title">
-            <div className="window-header-main-title">
+        <div className="flex justify-between items-center p-5 border-b border-border relative select-none">
+          <div className="flex flex-col overflow-hidden max-w-[calc(100%-100px)]">
+            <div className="text-xl font-bold truncate block max-w-[50vw]">
               {Locale.SearchChat.Page.Title}
             </div>
-            <div className="window-header-submai-title">
+            <div className="text-sm text-muted-foreground">
               {Locale.SearchChat.Page.SubTitle(searchResults.length)}
             </div>
           </div>
 
-          <div className="window-actions">
-            <div className="window-action-button">
+          <div className="flex gap-2">
+            <div className="flex items-center justify-center">
               <IconButton
                 icon={<CloseIcon />}
                 bordered
@@ -110,12 +109,12 @@ export function SearchChatPage() {
           </div>
         </div>
 
-        <div className={styles["mask-page-body"]}>
-          <div className={styles["mask-filter"]}>
+        <div className={"mask-page-body"}>
+          <div className={"mask-filter"}>
             {/**搜索输入框 */}
             <input
               type="text"
-              className={styles["search-bar"]}
+              className={"search-bar"}
               placeholder={Locale.SearchChat.Page.Search}
               autoFocus
               ref={searchInputRef}
@@ -135,7 +134,7 @@ export function SearchChatPage() {
           <div>
             {searchResults.map((item) => (
               <div
-                className={styles["mask-item"]}
+                className={"mask-item"}
                 key={item.id}
                 onClick={() => {
                   navigate(Path.Chat);
@@ -144,14 +143,14 @@ export function SearchChatPage() {
                 style={{ cursor: "pointer" }}
               >
                 {/** 搜索匹配的文本 */}
-                <div className={styles["mask-header"]}>
-                  <div className={styles["mask-title"]}>
-                    <div className={styles["mask-name"]}>{item.name}</div>
+                <div className={"mask-header"}>
+                  <div className={"mask-title"}>
+                    <div className={"mask-name"}>{item.name}</div>
                     {item.content.slice(0, 70)}
                   </div>
                 </div>
                 {/** 操作按钮 */}
-                <div className={styles["mask-actions"]}>
+                <div className={"mask-actions"}>
                   <IconButton
                     icon={<EyeIcon />}
                     text={Locale.SearchChat.Item.View}

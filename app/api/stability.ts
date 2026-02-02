@@ -5,7 +5,7 @@ import { auth } from "@/app/api/auth";
 
 export async function handle(
   req: NextRequest,
-  { params }: { params: { path: string[] } },
+  { params }: { params: { provider: string; path: string[] } },
 ) {
   console.log("[Stability] params ", params);
 

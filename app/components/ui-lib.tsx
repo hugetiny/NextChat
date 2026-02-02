@@ -1,5 +1,4 @@
 /* eslint-disable @next/next/no-img-element */
-import styles from "./ui-lib.module.scss";
 import LoadingIcon from "../icons/three-dots.svg";
 import CloseIcon from "../icons/close.svg";
 import EyeIcon from "../icons/eye.svg";
@@ -25,6 +24,15 @@ import React, {
 import { IconButton } from "./button";
 import { Avatar } from "./emoji";
 import clsx from "clsx";
+import { Input as ShadcnInput } from "./ui/input";
+import {
+  Select as ShadcnSelect,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "./ui/select";
+import { cn } from "../lib/utils";
 
 export function Popover(props: {
   children: JSX.Element;
@@ -33,21 +41,21 @@ export function Popover(props: {
   onClose?: () => void;
 }) {
   return (
-    <div className={styles.popover}>
+    <div className={"popover"}>
       {props.children}
       {props.open && (
-        <div className={styles["popover-mask"]} onClick={props.onClose}></div>
+        <div className={"popover-mask"} onClick={props.onClose}></div>
       )}
-      {props.open && (
-        <div className={styles["popover-content"]}>{props.content}</div>
-      )}
+      {props.open && <div className={"popover-content"}>{props.content}</div>}
     </div>
   );
 }
 
 export function Card(props: { children: JSX.Element[]; className?: string }) {
   return (
-    <div className={clsx(styles.card, props.className)}>{props.children}</div>
+    <div className={cn("bg-card p-4 rounded-lg shadow-sm", props.className)}>
+      {props.children}
+    </div>
   );
 }
 
@@ -62,21 +70,21 @@ export function ListItem(props: {
 }) {
   return (
     <div
-      className={clsx(
-        styles["list-item"],
+      className={cn(
+        "flex justify-between items-center p-4 bg-card border-b border-border last:border-0 first:rounded-t-lg last:rounded-b-lg",
         {
-          [styles["vertical"]]: props.vertical,
+          ["flex-col items-start"]: props.vertical,
         },
         props.className,
       )}
       onClick={props.onClick}
     >
-      <div className={styles["list-header"]}>
-        {props.icon && <div className={styles["list-icon"]}>{props.icon}</div>}
-        <div className={styles["list-item-title"]}>
-          <div>{props.title}</div>
+      <div className={"flex items-center"}>
+        {props.icon && <div className={"mr-2"}>{props.icon}</div>}
+        <div className={"flex flex-col"}>
+          <div className={"font-bold"}>{props.title}</div>
           {props.subTitle && (
-            <div className={styles["list-item-sub-title"]}>
+            <div className={"text-xs text-muted-foreground"}>
               {props.subTitle}
             </div>
           )}
@@ -89,7 +97,7 @@ export function ListItem(props: {
 
 export function List(props: { children: React.ReactNode; id?: string }) {
   return (
-    <div className={styles.list} id={props.id}>
+    <div className={"mb-5 border rounded-lg overflow-hidden"} id={props.id}>
       {props.children}
     </div>
   );
@@ -139,36 +147,30 @@ export function Modal(props: ModalProps) {
 
   return (
     <div
-      className={clsx(styles["modal-container"], {
-        [styles["modal-container-max"]]: isMax,
+      className={clsx("modal-container", {
+        ["modal-container-max"]: isMax,
       })}
     >
-      <div className={styles["modal-header"]}>
-        <div className={styles["modal-title"]}>{props.title}</div>
+      <div className={"modal-header"}>
+        <div className={"modal-title"}>{props.title}</div>
 
-        <div className={styles["modal-header-actions"]}>
-          <div
-            className={styles["modal-header-action"]}
-            onClick={() => setMax(!isMax)}
-          >
+        <div className={"modal-header-actions"}>
+          <div className={"modal-header-action"} onClick={() => setMax(!isMax)}>
             {isMax ? <MinIcon /> : <MaxIcon />}
           </div>
-          <div
-            className={styles["modal-header-action"]}
-            onClick={props.onClose}
-          >
+          <div className={"modal-header-action"} onClick={props.onClose}>
             <CloseIcon />
           </div>
         </div>
       </div>
 
-      <div className={styles["modal-content"]}>{props.children}</div>
+      <div className={"modal-content"}>{props.children}</div>
 
-      <div className={styles["modal-footer"]}>
+      <div className={"modal-footer"}>
         {props.footer}
-        <div className={styles["modal-actions"]}>
+        <div className={"modal-actions"}>
           {props.actions?.map((action, i) => (
-            <div key={i} className={styles["modal-action"]}>
+            <div key={i} className={"modal-action"}>
               {action}
             </div>
           ))}
@@ -210,8 +212,8 @@ export type ToastProps = {
 
 export function Toast(props: ToastProps) {
   return (
-    <div className={styles["toast-container"]}>
-      <div className={styles["toast-content"]}>
+    <div className={"toast-container"}>
+      <div className={"toast-content"}>
         <span>{props.content}</span>
         {props.action && (
           <button
@@ -219,7 +221,7 @@ export function Toast(props: ToastProps) {
               props.action?.onClick?.();
               props.onClose?.();
             }}
-            className={styles["toast-action"]}
+            className={"toast-action"}
           >
             {props.action.text}
           </button>
@@ -235,12 +237,12 @@ export function showToast(
   delay = 3000,
 ) {
   const div = document.createElement("div");
-  div.className = styles.show;
+  div.className = "show";
   document.body.appendChild(div);
 
   const root = createRoot(div);
   const close = () => {
-    div.classList.add(styles.hide);
+    div.classList.add("hide");
 
     setTimeout(() => {
       root.unmount();
@@ -262,10 +264,7 @@ export type InputProps = React.HTMLProps<HTMLTextAreaElement> & {
 
 export function Input(props: InputProps) {
   return (
-    <textarea
-      {...props}
-      className={clsx(styles["input"], props.className)}
-    ></textarea>
+    <textarea {...props} className={clsx("input", props.className)}></textarea>
   );
 }
 
@@ -273,22 +272,31 @@ export function PasswordInput(
   props: HTMLProps<HTMLInputElement> & { aria?: string },
 ) {
   const [visible, setVisible] = useState(false);
+  const { className, style, ...inputProps } = props;
+
   function changeVisibility() {
     setVisible(!visible);
   }
 
   return (
-    <div className={"password-input-container"}>
+    <div
+      className={cn(
+        "flex justify-end items-center relative max-w-[50%] w-full",
+        className,
+      )}
+      style={style}
+    >
       <IconButton
         aria={props.aria}
         icon={visible ? <EyeIcon /> : <EyeOffIcon />}
         onClick={changeVisibility}
-        className={"password-eye"}
+        className="absolute right-2 z-10"
+        type={null}
       />
-      <input
-        {...props}
+      <ShadcnInput
+        {...inputProps}
         type={visible ? "text" : "password"}
-        className={"password-input"}
+        className="pr-10 text-center"
       />
     </div>
   );
@@ -302,21 +310,54 @@ export function Select(
     HTMLSelectElement
   >,
 ) {
-  const { className, children, align, ...otherProps } = props;
+  const { className, children, align, value, onChange, ...otherProps } = props;
+
+  const options = React.Children.map(children, (child: any) => {
+    if (child?.type === "option") {
+      return {
+        value: child.props.value,
+        label: child.props.children,
+      };
+    }
+    return null;
+  })?.filter(Boolean) as { value: string; label: string }[];
+
+  const onValueChange = (newValue: string) => {
+    if (onChange) {
+      const syntheticEvent = {
+        target: { value: newValue },
+        currentTarget: { value: newValue },
+      } as React.ChangeEvent<HTMLSelectElement>;
+      onChange(syntheticEvent);
+    }
+  };
+
   return (
     <div
-      className={clsx(
-        styles["select-with-icon"],
+      className={cn(
+        "select-with-icon relative",
         {
-          [styles["left-align-option"]]: align === "left",
+          ["text-left"]: align === "left",
         },
         className,
       )}
     >
-      <select className={styles["select-with-icon-select"]} {...otherProps}>
-        {children}
-      </select>
-      <DownIcon className={styles["select-with-icon-icon"]} />
+      <ShadcnSelect
+        value={value as string}
+        onValueChange={onValueChange}
+        {...(otherProps as any)}
+      >
+        <SelectTrigger className="w-[180px] text-center">
+          <SelectValue placeholder={value} />
+        </SelectTrigger>
+        <SelectContent>
+          {options?.map((opt) => (
+            <SelectItem key={opt.value} value={opt.value}>
+              {opt.label}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </ShadcnSelect>
     </div>
   );
 }
@@ -385,7 +426,7 @@ function PromptInput(props: {
 
   return (
     <textarea
-      className={styles["modal-input"]}
+      className={"modal-input"}
       autoFocus
       value={input}
       onInput={(e) => onInput(e.currentTarget.value)}
@@ -490,8 +531,8 @@ export function Selector<T>(props: {
     Array.isArray(props.defaultSelectedValue)
       ? props.defaultSelectedValue
       : props.defaultSelectedValue !== undefined
-      ? [props.defaultSelectedValue]
-      : [],
+        ? [props.defaultSelectedValue]
+        : [],
   );
 
   const handleSelection = (e: MouseEvent, value: T) => {
@@ -510,15 +551,15 @@ export function Selector<T>(props: {
   };
 
   return (
-    <div className={styles["selector"]} onClick={() => props.onClose?.()}>
-      <div className={styles["selector-content"]}>
+    <div className={"selector"} onClick={() => props.onClose?.()}>
+      <div className={"selector-content"}>
         <List>
           {props.items.map((item, i) => {
             const selected = selectedValues.includes(item.value);
             return (
               <ListItem
-                className={clsx(styles["selector-item"], {
-                  [styles["selector-item-disabled"]]: item.disable,
+                className={clsx("selector-item", {
+                  ["selector-item-disabled"]: item.disable,
                 })}
                 key={i}
                 title={item.title}

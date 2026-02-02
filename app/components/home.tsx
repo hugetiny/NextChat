@@ -3,7 +3,6 @@
 require("../polyfill");
 
 import { useEffect, useState } from "react";
-import styles from "./home.module.scss";
 
 import BotIcon from "../icons/bot.svg";
 import LoadingIcon from "../icons/three-dots.svg";
@@ -33,7 +32,12 @@ import { initializeMcpSystem, isMcpEnabled } from "../mcp/actions";
 
 export function Loading(props: { noLogo?: boolean }) {
   return (
-    <div className={clsx("no-dark", styles["loading-content"])}>
+    <div
+      className={clsx(
+        "no-dark",
+        "flex flex-col items-center justify-center h-screen w-full bg-background",
+      )}
+    >
       {!props.noLogo && <BotIcon />}
       <LoadingIcon />
     </div>
@@ -151,7 +155,12 @@ const loadAsyncGoogleFont = () => {
 
 export function WindowContent(props: { children: React.ReactNode }) {
   return (
-    <div className={styles["window-content"]} id={SlotID.AppBody}>
+    <div
+      className={
+        "flex-1 flex flex-col h-full relative overflow-hidden bg-background"
+      }
+      id={SlotID.AppBody}
+    >
       {props?.children}
     </div>
   );
@@ -189,7 +198,7 @@ function Screen() {
       <>
         <SideBar
           className={clsx({
-            [styles["sidebar-show"]]: isHome,
+            ["sidebar-show"]: isHome,
           })}
         />
         <WindowContent>
@@ -210,9 +219,10 @@ function Screen() {
 
   return (
     <div
-      className={clsx(styles.container, {
-        [styles["tight-container"]]: shouldTightBorder,
-        [styles["rtl-screen"]]: getLang() === "ar",
+      className={clsx("flex h-full w-full bg-background text-foreground", {
+        ["p-4 max-w-[1200px] mx-auto h-[90vh] rounded-xl border shadow-xl"]:
+          shouldTightBorder,
+        ["rtl-screen"]: getLang() === "ar",
       })}
     >
       {renderContent()}

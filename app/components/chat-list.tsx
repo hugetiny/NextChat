@@ -1,6 +1,5 @@
 import DeleteIcon from "../icons/delete.svg";
 
-import styles from "./home.module.scss";
 import {
   DragDropContext,
   Droppable,
@@ -18,7 +17,7 @@ import { Mask } from "../store/mask";
 import { useRef, useEffect } from "react";
 import { showConfirm } from "./ui-lib";
 import { useMobileScreen } from "../utils";
-import clsx from "clsx";
+import { cn } from "../lib/utils";
 
 export function ChatItem(props: {
   onClick?: () => void;
@@ -46,11 +45,16 @@ export function ChatItem(props: {
     <Draggable draggableId={`${props.id}`} index={props.index}>
       {(provided) => (
         <div
-          className={clsx(styles["chat-item"], {
-            [styles["chat-item-selected"]]:
-              props.selected &&
-              (currentPath === Path.Chat || currentPath === Path.Home),
-          })}
+          className={cn(
+            "relative group flex flex-col gap-2 p-3 rounded-xl cursor-pointer transition-colors mb-2 border border-transparent hover:border-border",
+            {
+              "bg-accent text-accent-foreground border-border":
+                props.selected &&
+                (currentPath === Path.Chat || currentPath === Path.Home),
+              "hover:bg-accent/50 hover:text-accent-foreground":
+                !props.selected,
+            },
+          )}
           onClick={props.onClick}
           ref={(ele) => {
             draggableRef.current = ele;
@@ -63,31 +67,40 @@ export function ChatItem(props: {
           )}`}
         >
           {props.narrow ? (
-            <div className={styles["chat-item-narrow"]}>
-              <div className={clsx(styles["chat-item-avatar"], "no-dark")}>
+            <div className={"flex flex-col items-center justify-center h-full"}>
+              <div className={cn("chat-item-avatar", "no-dark")}>
                 <MaskAvatar
                   avatar={props.mask.avatar}
                   model={props.mask.modelConfig.model}
                 />
               </div>
-              <div className={styles["chat-item-narrow-count"]}>
+              <div className={"mt-1 text-xs text-muted-foreground"}>
                 {props.count}
               </div>
             </div>
           ) : (
             <>
-              <div className={styles["chat-item-title"]}>{props.title}</div>
-              <div className={styles["chat-item-info"]}>
-                <div className={styles["chat-item-count"]}>
+              <div className={"font-bold text-sm truncate block"}>
+                {props.title}
+              </div>
+              <div
+                className={
+                  "flex justify-between text-xs text-muted-foreground mt-1"
+                }
+              >
+                <div className={"whitespace-nowrap"}>
                   {Locale.ChatItem.ChatItemCount(props.count)}
                 </div>
-                <div className={styles["chat-item-date"]}>{props.time}</div>
+                <div className={"whitespace-nowrap"}>{props.time}</div>
               </div>
             </>
           )}
 
           <div
-            className={styles["chat-item-delete"]}
+            className={cn(
+              "absolute right-2 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 p-1 text-muted-foreground hover:text-destructive transition-all rounded-md hover:bg-background/80",
+              props.narrow ? "hidden" : "",
+            )}
             onClickCapture={(e) => {
               props.onDelete?.();
               e.preventDefault();
@@ -136,7 +149,7 @@ export function ChatList(props: { narrow?: boolean }) {
       <Droppable droppableId="chat-list">
         {(provided) => (
           <div
-            className={styles["chat-list"]}
+            className={"flex flex-col pb-4"}
             ref={provided.innerRef}
             {...provided.droppableProps}
           >

@@ -1,6 +1,6 @@
 import { IconButton } from "./button";
 import { ErrorBoundary } from "./error";
-import styles from "./mcp-market.module.scss";
+
 import EditIcon from "../icons/edit.svg";
 import AddIcon from "../icons/add.svg";
 import CloseIcon from "../icons/close.svg";
@@ -346,10 +346,10 @@ export function McpMarketPage() {
               subTitle={prop.description}
               vertical
             >
-              <div className={styles["path-list"]}>
+              <div className={"path-list"}>
                 {(currentValue as string[]).map(
                   (value: string, index: number) => (
-                    <div key={index} className={styles["path-item"]}>
+                    <div key={index} className={"path-item"}>
                       <input
                         type="text"
                         value={value}
@@ -362,7 +362,7 @@ export function McpMarketPage() {
                       />
                       <IconButton
                         icon={<DeleteIcon />}
-                        className={styles["delete-button"]}
+                        className={"delete-button"}
                         onClick={() => {
                           const newValue = [...currentValue] as string[];
                           newValue.splice(index, 1);
@@ -375,7 +375,7 @@ export function McpMarketPage() {
                 <IconButton
                   icon={<AddIcon />}
                   text={addButtonText}
-                  className={styles["add-button"]}
+                  className={"add-button"}
                   bordered
                   onClick={() => {
                     const newValue = [...currentValue, ""] as string[];
@@ -417,20 +417,16 @@ export function McpMarketPage() {
       undefined: null, // 未配置/未找到不显示
       // 添加初始化状态
       initializing: (
-        <span className={clsx(styles["server-status"], styles["initializing"])}>
+        <span className={clsx("server-status", "initializing")}>
           Initializing
         </span>
       ),
-      paused: (
-        <span className={clsx(styles["server-status"], styles["stopped"])}>
-          Stopped
-        </span>
-      ),
-      active: <span className={styles["server-status"]}>Running</span>,
+      paused: <span className={clsx("server-status", "stopped")}>Stopped</span>,
+      active: <span className={"server-status"}>Running</span>,
       error: (
-        <span className={clsx(styles["server-status"], styles["error"])}>
+        <span className={clsx("server-status", "error")}>
           Error
-          <span className={styles["error-message"]}>: {status.errorMsg}</span>
+          <span className={"error-message"}>: {status.errorMsg}</span>
         </span>
       ),
     };
@@ -450,18 +446,16 @@ export function McpMarketPage() {
   const renderServerList = () => {
     if (loadingPresets) {
       return (
-        <div className={styles["loading-container"]}>
-          <div className={styles["loading-text"]}>
-            Loading preset server list...
-          </div>
+        <div className={"loading-container"}>
+          <div className={"loading-text"}>Loading preset server list...</div>
         </div>
       );
     }
 
     if (!Array.isArray(presetServers) || presetServers.length === 0) {
       return (
-        <div className={styles["empty-container"]}>
-          <div className={styles["empty-text"]}>No servers available</div>
+        <div className={"empty-container"}>
+          <div className={"empty-text"}>No servers available</div>
         </div>
       );
     }
@@ -523,18 +517,18 @@ export function McpMarketPage() {
       })
       .map((server) => (
         <div
-          className={clsx(styles["mcp-market-item"], {
-            [styles["loading"]]: loadingStates[server.id],
+          className={clsx("mcp-market-item", {
+            ["loading"]: loadingStates[server.id],
           })}
           key={server.id}
         >
-          <div className={styles["mcp-market-header"]}>
-            <div className={styles["mcp-market-title"]}>
-              <div className={styles["mcp-market-name"]}>
+          <div className={"mcp-market-header"}>
+            <div className={"mcp-market-title"}>
+              <div className={"mcp-market-name"}>
                 {server.name}
                 {loadingStates[server.id] && (
                   <span
-                    className={styles["operation-status"]}
+                    className={"operation-status"}
                     data-status={getOperationStatusType(
                       loadingStates[server.id],
                     )}
@@ -548,28 +542,28 @@ export function McpMarketPage() {
                     href={server.repo}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className={styles["repo-link"]}
+                    className={"repo-link"}
                     title="Open repository"
                   >
                     <GithubIcon />
                   </a>
                 )}
               </div>
-              <div className={styles["tags-container"]}>
+              <div className={"tags-container"}>
                 {server.tags.map((tag, index) => (
-                  <span key={index} className={styles["tag"]}>
+                  <span key={index} className={"tag"}>
                     {tag}
                   </span>
                 ))}
               </div>
               <div
-                className={clsx(styles["mcp-market-info"], "one-line")}
+                className={clsx("mcp-market-info", "one-line")}
                 title={server.description}
               >
                 {server.description}
               </div>
             </div>
-            <div className={styles["mcp-market-actions"]}>
+            <div className={"mcp-market-actions"}>
               {isServerAdded(server.id) ? (
                 <>
                   {server.configurable && (
@@ -634,24 +628,24 @@ export function McpMarketPage() {
 
   return (
     <ErrorBoundary>
-      <div className={styles["mcp-market-page"]}>
-        <div className="window-header">
-          <div className="window-header-title">
-            <div className="window-header-main-title">
+      <div className={"mcp-market-page"}>
+        <div className="flex justify-between items-center p-5 border-b border-border relative select-none">
+          <div className="flex flex-col overflow-hidden max-w-[calc(100%-100px)]">
+            <div className="text-xl font-bold truncate block max-w-[50vw]">
               MCP Market
               {loadingStates["all"] && (
-                <span className={styles["loading-indicator"]}>
+                <span className={"loading-indicator"}>
                   {loadingStates["all"]}
                 </span>
               )}
             </div>
-            <div className="window-header-sub-title">
+            <div className="text-sm text-muted-foreground">
               {Object.keys(config?.mcpServers ?? {}).length} servers configured
             </div>
           </div>
 
-          <div className="window-actions">
-            <div className="window-action-button">
+          <div className="flex gap-2">
+            <div className="flex items-center justify-center">
               <IconButton
                 icon={<RestartIcon />}
                 bordered
@@ -660,7 +654,7 @@ export function McpMarketPage() {
                 disabled={isLoading}
               />
             </div>
-            <div className="window-action-button">
+            <div className="flex items-center justify-center">
               <IconButton
                 icon={<CloseIcon />}
                 bordered
@@ -671,18 +665,18 @@ export function McpMarketPage() {
           </div>
         </div>
 
-        <div className={styles["mcp-market-page-body"]}>
-          <div className={styles["mcp-market-filter"]}>
+        <div className={"mcp-market-page-body"}>
+          <div className={"mcp-market-filter"}>
             <input
               type="text"
-              className={styles["search-bar"]}
+              className={"search-bar"}
               placeholder={"Search MCP Server"}
               autoFocus
               onInput={(e) => setSearchText(e.currentTarget.value)}
             />
           </div>
 
-          <div className={styles["server-list"]}>{renderServerList()}</div>
+          <div className={"server-list"}>{renderServerList()}</div>
         </div>
 
         {/*编辑服务器配置*/}
@@ -728,15 +722,15 @@ export function McpMarketPage() {
                 />,
               ]}
             >
-              <div className={styles["tools-list"]}>
+              <div className={"tools-list"}>
                 {isLoading ? (
                   <div>Loading...</div>
                 ) : tools?.tools ? (
                   tools.tools.map(
                     (tool: ListToolsResponse["tools"], index: number) => (
-                      <div key={index} className={styles["tool-item"]}>
-                        <div className={styles["tool-name"]}>{tool.name}</div>
-                        <div className={styles["tool-description"]}>
+                      <div key={index} className={"tool-item"}>
+                        <div className={"tool-name"}>{tool.name}</div>
+                        <div className={"tool-description"}>
                           {tool.description}
                         </div>
                       </div>

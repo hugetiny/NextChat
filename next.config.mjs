@@ -1,4 +1,4 @@
-import webpack from "webpack";
+import { execSync } from "child_process";
 
 const mode = process.env.BUILD_MODE ?? "standalone";
 console.log("[Next] build mode", mode);
@@ -6,32 +6,36 @@ console.log("[Next] build mode", mode);
 const disableChunk = !!process.env.DISABLE_CHUNK || mode === "export";
 console.log("[Next] build with chunk: ", !disableChunk);
 
+let commitHash = "unknown";
+let commitDate = "unknown";
+
+try {
+  commitHash = execSync('git log --pretty=format:"%H" -n 1').toString().trim();
+  commitDate = execSync('git log -1 --format="%at000" --date=unix')
+    .toString()
+    .trim();
+} catch (e) {
+  console.error("[Next] Failed to get git info");
+}
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  webpack(config) {
-    config.module.rules.push({
-      test: /\.svg$/,
-      use: ["@svgr/webpack"],
-    });
-
-    if (disableChunk) {
-      config.plugins.push(
-        new webpack.optimize.LimitChunkCountPlugin({ maxChunks: 1 }),
-      );
-    }
-
-    config.resolve.fallback = {
-      child_process: false,
-    };
-
-    return config;
+  env: {
+    NEXT_PUBLIC_COMMIT_HASH: commitHash,
+    NEXT_PUBLIC_COMMIT_DATE: commitDate,
   },
   output: mode,
   images: {
     unoptimized: mode === "export",
   },
-  experimental: {
-    forceSwcTransforms: true,
+
+  turbopack: {
+    rules: {
+      "*.svg": {
+        loaders: ["@svgr/webpack"],
+        as: "*.js",
+      },
+    },
   },
 };
 

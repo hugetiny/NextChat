@@ -16,7 +16,7 @@ const ALLOWD_PATH = new Set([Anthropic.ChatPath, Anthropic.ChatPath1]);
 
 export async function handle(
   req: NextRequest,
-  { params }: { params: { path: string[] } },
+  { params }: { params: { provider: string; path: string[] } },
 ) {
   console.log("[Anthropic Route] params ", params);
 

@@ -1,7 +1,5 @@
 import React, { Fragment, useEffect, useMemo, useRef, useState } from "react";
 
-import styles from "./home.module.scss";
-
 import { IconButton } from "./button";
 import SettingsIcon from "../icons/settings.svg";
 import GithubIcon from "../icons/github.svg";
@@ -150,17 +148,24 @@ export function SideBarContainer(props: {
   const { children, className, onDragStart, shouldNarrow } = props;
   return (
     <div
-      className={clsx(styles.sidebar, className, {
-        [styles["narrow-sidebar"]]: shouldNarrow,
-      })}
+      className={clsx(
+        "h-full flex flex-col bg-sidebar border-r transition-all duration-300 ease-in-out relative group",
+        className,
+        {
+          ["narrow-sidebar"]: shouldNarrow,
+        },
+      )}
       style={{
+        width: "var(--sidebar-width)",
         // #3016 disable transition on ios mobile screen
         transition: isMobileScreen && isIOSMobile ? "none" : undefined,
       }}
     >
       {children}
       <div
-        className={styles["sidebar-drag"]}
+        className={
+          "absolute top-0 right-0 h-full w-1 cursor-col-resize hover:bg-primary/20 transition-colors z-50"
+        }
         onPointerDown={(e) => onDragStart(e as any)}
       >
         <DragIcon />
@@ -180,18 +185,18 @@ export function SideBarHeader(props: {
   return (
     <Fragment>
       <div
-        className={clsx(styles["sidebar-header"], {
-          [styles["sidebar-header-narrow"]]: shouldNarrow,
+        className={clsx("p-5 pb-0 flex flex-col gap-4 relative shrink-0", {
+          ["sidebar-header-narrow"]: shouldNarrow,
         })}
         data-tauri-drag-region
       >
-        <div className={styles["sidebar-title-container"]}>
-          <div className={styles["sidebar-title"]} data-tauri-drag-region>
+        <div className={"flex flex-col gap-1"}>
+          <div className={"text-xl font-bold"} data-tauri-drag-region>
             {title}
           </div>
-          <div className={styles["sidebar-sub-title"]}>{subTitle}</div>
+          <div className={"text-xs text-muted-foreground"}>{subTitle}</div>
         </div>
-        <div className={clsx(styles["sidebar-logo"], "no-dark")}>{logo}</div>
+        <div className={clsx("absolute top-5 right-5", "no-dark")}>{logo}</div>
       </div>
       {children}
     </Fragment>
@@ -204,7 +209,10 @@ export function SideBarBody(props: {
 }) {
   const { onClick, children } = props;
   return (
-    <div className={styles["sidebar-body"]} onClick={onClick}>
+    <div
+      className={"flex-1 overflow-y-auto overflow-x-hidden p-5"}
+      onClick={onClick}
+    >
       {children}
     </div>
   );
@@ -217,9 +225,13 @@ export function SideBarTail(props: {
   const { primaryAction, secondaryAction } = props;
 
   return (
-    <div className={styles["sidebar-tail"]}>
-      <div className={styles["sidebar-actions"]}>{primaryAction}</div>
-      <div className={styles["sidebar-actions"]}>{secondaryAction}</div>
+    <div className={"p-5 pt-0 flex flex-col gap-2 shrink-0"}>
+      <div className={"flex gap-2 items-center justify-between"}>
+        {primaryAction}
+      </div>
+      <div className={"flex gap-2 items-center justify-between"}>
+        {secondaryAction}
+      </div>
     </div>
   );
 }
@@ -255,11 +267,11 @@ export function SideBar(props: { className?: string }) {
         logo={<ChatGptIcon />}
         shouldNarrow={shouldNarrow}
       >
-        <div className={styles["sidebar-header-bar"]}>
+        <div className={"flex gap-2 items-center"}>
           <IconButton
             icon={<MaskIcon />}
             text={shouldNarrow ? undefined : Locale.Mask.Name}
-            className={styles["sidebar-bar-button"]}
+            className={"sidebar-bar-button"}
             onClick={() => {
               if (config.dontShowMaskSplashScreen !== true) {
                 navigate(Path.NewChat, { state: { fromHome: true } });
@@ -273,7 +285,7 @@ export function SideBar(props: { className?: string }) {
             <IconButton
               icon={<McpIcon />}
               text={shouldNarrow ? undefined : Locale.Mcp.Name}
-              className={styles["sidebar-bar-button"]}
+              className={"sidebar-bar-button"}
               onClick={() => {
                 navigate(Path.McpMarket, { state: { fromHome: true } });
               }}
@@ -283,7 +295,7 @@ export function SideBar(props: { className?: string }) {
           <IconButton
             icon={<DiscoveryIcon />}
             text={shouldNarrow ? undefined : Locale.Discovery.Name}
-            className={styles["sidebar-bar-button"]}
+            className={"sidebar-bar-button"}
             onClick={() => setshowDiscoverySelector(true)}
             shadow
           />
@@ -317,7 +329,7 @@ export function SideBar(props: { className?: string }) {
       <SideBarTail
         primaryAction={
           <>
-            <div className={clsx(styles["sidebar-action"], styles.mobile)}>
+            <div className={clsx("sidebar-action", "mobile")}>
               <IconButton
                 icon={<DeleteIcon />}
                 onClick={async () => {
@@ -327,7 +339,7 @@ export function SideBar(props: { className?: string }) {
                 }}
               />
             </div>
-            <div className={styles["sidebar-action"]}>
+            <div className={"sidebar-action"}>
               <Link to={Path.Settings}>
                 <IconButton
                   aria={Locale.Settings.Title}
@@ -336,7 +348,16 @@ export function SideBar(props: { className?: string }) {
                 />
               </Link>
             </div>
-            <div className={styles["sidebar-action"]}>
+            <div className={"sidebar-action"}>
+              <Link to={Path.Settings}>
+                <IconButton
+                  aria={Locale.Settings.Title}
+                  icon={<SettingsIcon />}
+                  shadow
+                />
+              </Link>
+            </div>
+            <div className={"sidebar-action"}>
               <a href={REPO_URL} target="_blank" rel="noopener noreferrer">
                 <IconButton
                   aria={Locale.Export.MessageFromChatGPT}

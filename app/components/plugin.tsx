@@ -5,9 +5,6 @@ import { PLUGINS_REPO_URL } from "../constant";
 import { IconButton } from "./button";
 import { ErrorBoundary } from "./error";
 
-import styles from "./mask.module.scss";
-import pluginStyles from "./plugin.module.scss";
-
 import EditIcon from "../icons/edit.svg";
 import AddIcon from "../icons/add.svg";
 import CloseIcon from "../icons/close.svg";
@@ -43,8 +40,8 @@ export function PluginPage() {
   const onSearch = (text: string) => {
     setSearchText(text);
     if (text.length > 0) {
-      const result = allPlugins.filter(
-        (m) => m?.title.toLowerCase().includes(text.toLowerCase()),
+      const result = allPlugins.filter((m) =>
+        m?.title.toLowerCase().includes(text.toLowerCase()),
       );
       setSearchPlugins(result);
     } else {
@@ -118,19 +115,19 @@ export function PluginPage() {
 
   return (
     <ErrorBoundary>
-      <div className={styles["mask-page"]}>
-        <div className="window-header">
-          <div className="window-header-title">
-            <div className="window-header-main-title">
+      <div className={"mask-page"}>
+        <div className="flex justify-between items-center p-5 border-b border-border relative select-none">
+          <div className="flex flex-col overflow-hidden max-w-[calc(100%-100px)]">
+            <div className="text-xl font-bold truncate block max-w-[50vw]">
               {Locale.Plugin.Page.Title}
             </div>
-            <div className="window-header-submai-title">
+            <div className="text-sm text-muted-foreground">
               {Locale.Plugin.Page.SubTitle(plugins.length)}
             </div>
           </div>
 
-          <div className="window-actions">
-            <div className="window-action-button">
+          <div className="flex gap-2">
+            <div className="flex items-center justify-center">
               <a
                 href={PLUGINS_REPO_URL}
                 target="_blank"
@@ -139,7 +136,7 @@ export function PluginPage() {
                 <IconButton icon={<GithubIcon />} bordered />
               </a>
             </div>
-            <div className="window-action-button">
+            <div className="flex items-center justify-center">
               <IconButton
                 icon={<CloseIcon />}
                 bordered
@@ -149,18 +146,18 @@ export function PluginPage() {
           </div>
         </div>
 
-        <div className={styles["mask-page-body"]}>
-          <div className={styles["mask-filter"]}>
+        <div className={"mask-page-body"}>
+          <div className={"mask-filter"}>
             <input
               type="text"
-              className={styles["search-bar"]}
+              className={"search-bar"}
               placeholder={Locale.Plugin.Page.Search}
               autoFocus
               onInput={(e) => onSearch(e.currentTarget.value)}
             />
 
             <IconButton
-              className={styles["mask-create"]}
+              className={"mask-create"}
               icon={<AddIcon />}
               text={Locale.Plugin.Page.Create}
               bordered
@@ -193,21 +190,21 @@ export function PluginPage() {
               </div>
             )}
             {plugins.map((m) => (
-              <div className={styles["mask-item"]} key={m.id}>
-                <div className={styles["mask-header"]}>
-                  <div className={styles["mask-icon"]}></div>
-                  <div className={styles["mask-title"]}>
-                    <div className={styles["mask-name"]}>
+              <div className={"mask-item"} key={m.id}>
+                <div className={"mask-header"}>
+                  <div className={"mask-icon"}></div>
+                  <div className={"mask-title"}>
+                    <div className={"mask-name"}>
                       {m.title}@<small>{m.version}</small>
                     </div>
-                    <div className={clsx(styles["mask-info"], "one-line")}>
+                    <div className={clsx("mask-info", "one-line")}>
                       {Locale.Plugin.Item.Info(
                         FunctionToolService.add(m).length,
                       )}
                     </div>
                   </div>
                 </div>
-                <div className={styles["mask-actions"]}>
+                <div className={"mask-actions"}>
                   <IconButton
                     icon={<EditIcon />}
                     text={Locale.Plugin.Item.Edit}
@@ -319,7 +316,7 @@ export function PluginPage() {
             </List>
             <List>
               <ListItem title={Locale.Plugin.EditModal.Content}>
-                <div className={pluginStyles["plugin-schema"]}>
+                <div className={"plugin-schema"}>
                   <input
                     type="text"
                     style={{ minWidth: 200 }}
@@ -336,10 +333,7 @@ export function PluginPage() {
               <ListItem
                 subTitle={
                   <div
-                    className={clsx(
-                      "markdown-body",
-                      pluginStyles["plugin-content"],
-                    )}
+                    className={clsx("markdown-body", "plugin-content")}
                     dir="auto"
                   >
                     <pre>

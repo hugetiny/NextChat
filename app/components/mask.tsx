@@ -1,8 +1,6 @@
 import { IconButton } from "./button";
 import { ErrorBoundary } from "./error";
 
-import styles from "./mask.module.scss";
-
 import DownloadIcon from "../icons/download.svg";
 import UploadIcon from "../icons/upload.svg";
 import EditIcon from "../icons/edit.svg";
@@ -36,7 +34,6 @@ import { Avatar, AvatarPicker } from "./emoji";
 import Locale, { AllLangs, ALL_LANG_OPTIONS, Lang } from "../locales";
 import { useNavigate } from "react-router-dom";
 
-import chatStyle from "./chat.module.scss";
 import { useState } from "react";
 import {
   copyToClipboard,
@@ -266,15 +263,15 @@ function ContextPromptItem(props: {
   const [focusingInput, setFocusingInput] = useState(false);
 
   return (
-    <div className={chatStyle["context-prompt-row"]}>
+    <div className={"context-prompt-row"}>
       {!focusingInput && (
         <>
-          <div className={chatStyle["context-drag"]}>
+          <div className={"context-drag"}>
             <DragIcon />
           </div>
           <Select
             value={props.prompt.role}
-            className={chatStyle["context-role"]}
+            className={"context-role"}
             onChange={(e) =>
               props.update({
                 ...props.prompt,
@@ -293,7 +290,7 @@ function ContextPromptItem(props: {
       <Input
         value={getMessageTextContent(props.prompt)}
         type="text"
-        className={chatStyle["context-content"]}
+        className={"context-content"}
         rows={focusingInput ? 5 : 1}
         onFocus={() => setFocusingInput(true)}
         onBlur={() => {
@@ -312,7 +309,7 @@ function ContextPromptItem(props: {
       {!focusingInput && (
         <IconButton
           icon={<DeleteIcon />}
-          className={chatStyle["context-delete-button"]}
+          className={"context-delete-button"}
           onClick={() => props.remove()}
           bordered
         />
@@ -366,7 +363,7 @@ export function ContextPrompts(props: {
 
   return (
     <>
-      <div className={chatStyle["context-prompt"]} style={{ marginBottom: 20 }}>
+      <div className={"context-prompt"} style={{ marginBottom: 20 }}>
         <DragDropContext onDragEnd={onDragEnd}>
           <Droppable droppableId="context-prompt-list">
             {(provided) => (
@@ -390,7 +387,7 @@ export function ContextPrompts(props: {
                           remove={() => removeContextPrompt(i)}
                         />
                         <div
-                          className={chatStyle["context-prompt-insert"]}
+                          className={"context-prompt-insert"}
                           onClick={() => {
                             addContextPrompt(
                               createMessage({
@@ -415,12 +412,12 @@ export function ContextPrompts(props: {
         </DragDropContext>
 
         {props.context.length === 0 && (
-          <div className={chatStyle["context-prompt-row"]}>
+          <div className={"context-prompt-row"}>
             <IconButton
               icon={<AddIcon />}
               text={Locale.Context.Add}
               bordered
-              className={chatStyle["context-prompt-button"]}
+              className={"context-prompt-button"}
               onClick={() =>
                 addContextPrompt(
                   createMessage({
@@ -499,19 +496,19 @@ export function MaskPage() {
 
   return (
     <ErrorBoundary>
-      <div className={styles["mask-page"]}>
-        <div className="window-header">
-          <div className="window-header-title">
-            <div className="window-header-main-title">
+      <div className={"mask-page"}>
+        <div className="flex justify-between items-center p-5 border-b border-border relative select-none">
+          <div className="flex flex-col overflow-hidden max-w-[calc(100%-100px)]">
+            <div className="text-xl font-bold truncate block max-w-[50vw]">
               {Locale.Mask.Page.Title}
             </div>
-            <div className="window-header-submai-title">
+            <div className="text-sm text-muted-foreground">
               {Locale.Mask.Page.SubTitle(allMasks.length)}
             </div>
           </div>
 
-          <div className="window-actions">
-            <div className="window-action-button">
+          <div className="flex gap-2">
+            <div className="flex items-center justify-center">
               <IconButton
                 icon={<DownloadIcon />}
                 bordered
@@ -519,7 +516,7 @@ export function MaskPage() {
                 text={Locale.UI.Export}
               />
             </div>
-            <div className="window-action-button">
+            <div className="flex items-center justify-center">
               <IconButton
                 icon={<UploadIcon />}
                 text={Locale.UI.Import}
@@ -527,7 +524,7 @@ export function MaskPage() {
                 onClick={() => importFromFile()}
               />
             </div>
-            <div className="window-action-button">
+            <div className="flex items-center justify-center">
               <IconButton
                 icon={<CloseIcon />}
                 bordered
@@ -537,17 +534,17 @@ export function MaskPage() {
           </div>
         </div>
 
-        <div className={styles["mask-page-body"]}>
-          <div className={styles["mask-filter"]}>
+        <div className={"mask-page-body"}>
+          <div className={"mask-filter"}>
             <input
               type="text"
-              className={styles["search-bar"]}
+              className={"search-bar"}
               placeholder={Locale.Mask.Page.Search}
               autoFocus
               onInput={(e) => onSearch(e.currentTarget.value)}
             />
             <Select
-              className={styles["mask-filter-lang"]}
+              className={"mask-filter-lang"}
               value={filterLang ?? Locale.Settings.Lang.All}
               onChange={(e) => {
                 const value = e.currentTarget.value;
@@ -569,7 +566,7 @@ export function MaskPage() {
             </Select>
 
             <IconButton
-              className={styles["mask-create"]}
+              className={"mask-create"}
               icon={<AddIcon />}
               text={Locale.Mask.Page.Create}
               bordered
@@ -582,21 +579,21 @@ export function MaskPage() {
 
           <div>
             {masks.map((m) => (
-              <div className={styles["mask-item"]} key={m.id}>
-                <div className={styles["mask-header"]}>
-                  <div className={styles["mask-icon"]}>
+              <div className={"mask-item"} key={m.id}>
+                <div className={"mask-header"}>
+                  <div className={"mask-icon"}>
                     <MaskAvatar avatar={m.avatar} model={m.modelConfig.model} />
                   </div>
-                  <div className={styles["mask-title"]}>
-                    <div className={styles["mask-name"]}>{m.name}</div>
-                    <div className={clsx(styles["mask-info"], "one-line")}>
+                  <div className={"mask-title"}>
+                    <div className={"mask-name"}>{m.name}</div>
+                    <div className={clsx("mask-info", "one-line")}>
                       {`${Locale.Mask.Item.Info(m.context.length)} / ${
                         ALL_LANG_OPTIONS[m.lang]
                       } / ${m.modelConfig.model}`}
                     </div>
                   </div>
                 </div>
-                <div className={styles["mask-actions"]}>
+                <div className={"mask-actions"}>
                   <IconButton
                     icon={<AddIcon />}
                     text={Locale.Mask.Item.Chat}

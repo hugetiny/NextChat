@@ -1,7 +1,3 @@
-import chatStyles from "@/app/components/chat.module.scss";
-import styles from "@/app/components/sd/sd.module.scss";
-import homeStyles from "@/app/components/home.module.scss";
-
 import { IconButton } from "@/app/components/button";
 import ReturnIcon from "@/app/icons/return.svg";
 import Locale from "@/app/locales";
@@ -62,7 +58,7 @@ function getSdTaskStatus(item: any) {
       s = item.status.toUpperCase();
   }
   return (
-    <p className={styles["line-1"]} title={item.error} style={{ color: color }}>
+    <p className={"line-1"} title={item.error} style={{ color: color }}>
       <span>
         {Locale.Sd.Status.Name}: {s}
       </span>
@@ -105,13 +101,16 @@ export function Sd() {
 
   return (
     <>
-      <SideBar className={clsx({ [homeStyles["sidebar-show"]]: isSd })} />
+      <SideBar className={clsx({ ["sidebar-show"]: isSd })} />
       <WindowContent>
-        <div className={chatStyles.chat} key={"1"}>
-          <div className="window-header" data-tauri-drag-region>
+        <div className={"chat"} key={"1"}>
+          <div
+            className="flex justify-between items-center p-5 border-b border-border relative select-none"
+            data-tauri-drag-region
+          >
             {isMobileScreen && (
-              <div className="window-actions">
-                <div className={"window-action-button"}>
+              <div className="flex gap-2">
+                <div className="flex items-center justify-center">
                   <IconButton
                     icon={<ReturnIcon />}
                     bordered
@@ -123,19 +122,21 @@ export function Sd() {
             )}
             <div
               className={clsx(
-                "window-header-title",
-                chatStyles["chat-body-title"],
+                "flex flex-col overflow-hidden max-w-[calc(100%-100px)]",
+                "chat-body-title",
               )}
             >
-              <div className={`window-header-main-title`}>Stability AI</div>
-              <div className="window-header-sub-title">
+              <div className="text-xl font-bold truncate block max-w-[50vw]">
+                Stability AI
+              </div>
+              <div className="text-sm text-muted-foreground">
                 {Locale.Sd.SubTitle(sdImages.length || 0)}
               </div>
             </div>
 
-            <div className="window-actions">
+            <div className="flex gap-2">
               {showMaxIcon && (
-                <div className="window-action-button">
+                <div className="flex items-center justify-center">
                   <IconButton
                     aria={Locale.Chat.Actions.FullScreen}
                     icon={config.tightBorder ? <MinIcon /> : <MaxIcon />}
@@ -151,19 +152,19 @@ export function Sd() {
               {isMobileScreen && <SDIcon width={50} height={50} />}
             </div>
           </div>
-          <div className={chatStyles["chat-body"]} ref={scrollRef}>
-            <div className={styles["sd-img-list"]}>
+          <div className={"chat-body"} ref={scrollRef}>
+            <div className={"sd-img-list"}>
               {sdImages.length > 0 ? (
                 sdImages.map((item: any) => {
                   return (
                     <div
                       key={item.id}
                       style={{ display: "flex" }}
-                      className={styles["sd-img-item"]}
+                      className={"sd-img-item"}
                     >
                       {item.status === "success" ? (
                         <img
-                          className={styles["img"]}
+                          className={"img"}
                           src={item.img_data}
                           alt={item.id}
                           onClick={(e) =>
@@ -180,19 +181,19 @@ export function Sd() {
                           }
                         />
                       ) : item.status === "error" ? (
-                        <div className={styles["pre-img"]}>
+                        <div className={"pre-img"}>
                           <ErrorIcon />
                         </div>
                       ) : (
-                        <div className={styles["pre-img"]}>
+                        <div className={"pre-img"}>
                           <LoadingIcon />
                         </div>
                       )}
                       <div
                         style={{ marginLeft: "10px" }}
-                        className={styles["sd-img-item-info"]}
+                        className={"sd-img-item-info"}
                       >
-                        <p className={styles["line-1"]}>
+                        <p className={"line-1"}>
                           {Locale.SdPanel.Prompt}:{" "}
                           <span
                             className="clickable"
@@ -216,8 +217,12 @@ export function Sd() {
                         </p>
                         {getSdTaskStatus(item)}
                         <p>{item.created_at}</p>
-                        <div className={chatStyles["chat-message-actions"]}>
-                          <div className={chatStyles["chat-input-actions"]}>
+                        <div className={"chat-message-actions"}>
+                          <div
+                            className={
+                              "flex flex-wrap gap-2 w-full justify-start items-center relative"
+                            }
+                          >
                             <ChatAction
                               text={Locale.Sd.Actions.Params}
                               icon={<PromptIcon />}
